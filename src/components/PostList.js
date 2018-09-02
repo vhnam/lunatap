@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import Axios from 'axios';
 
-// import ListItem from './ListItem.js';
-
 export default class PostList extends Component {
     constructor(props) {
         super(props);
