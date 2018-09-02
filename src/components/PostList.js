@@ -1,42 +1,58 @@
 import React, { Component } from 'react';
-import Axios from 'axios';
+
+import PostActions from './../actions/PostActions';
+import PostStore from './../stores/PostStore';
+
+function getPostListItem(post) {
+    return (
+        <li>
+            <div className="list__item item">
+                <strong className="item__title">{post.title}</strong>
+                <p className="item__body" dangerouslySetInnerHTML={{__html: post.body}} />
+            </div>
+        </li>
+    )
+}
 
 export default class PostList extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            listItems: []
+            posts: []
         };
+
+        this.onChange = this.onChange.bind(this);
+    }
+
+    componentWillMount() {
+        PostStore.addChangeListener(this.onChange);
     }
 
     componentDidMount() {
-        let self = this;
+        PostActions.recievePosts();
+    }
 
-        Axios.get(this.props.source).then(function(res) {
-            if (200 === res.status) {
-                let listItems = res.data.map(function(item) {
-                    return (
-                        <li>
-                            <div className="list__item item">
-                                <strong className="item__title">{item.title}</strong>
-                                <p className="item__body" dangerouslySetInnerHTML={{__html: item.body}} />
-                            </div>
-                        </li>
-                    )
-                });
+    componentWillUnmount() {
+        PostStore.removeChangeListener(this.onChange);
+    }
 
-                self.setState({listItems: listItems});
-            }
-        }).catch(function(err) {
-            console.error(err);
+    onChange() {
+        this.setState({
+            posts: PostStore.getPosts()
         });
     }
-  
+
     render() {
+        let postListItems;
+
+        if (this.state.posts) {
+            postListItems = this.state.posts.map(post => getPostListItem(post));
+        }
+        
         return (
             <ul className="posts__list list">
-                {this.state.listItems}
+                {postListItems}
             </ul>
         )
     }
