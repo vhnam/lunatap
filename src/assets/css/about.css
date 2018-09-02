@@ -1,0 +1,8 @@
+.about .jumbotron {
+    margin-top: 10rem;
+    background-color: transparent;
+}
+
+.about .hero__image {
+    width: 100vw;
+}
